@@ -1,0 +1,62 @@
+<%- layout("/partials/boilerplate.ejs") %> 
+<body>
+    <div class="container">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md bg-dark m-5 text-center contactBackground">
+                        <h1 class="my-5 text-white text-center "><u>Contact Info</u></h1>
+                        <div class="form-group text-white">
+                            <h5><u>Name</u></h5>
+                            <label class="my-3" for="">Supavich Aussawaauschariyakul</label>
+                            <br>
+                            <h5><u>Address</u></h5>
+                            <label for="exampleInputEmail1" class="my-3">Address: 178 High Street, High Barnet, EN5 5SZ</label>
+                            <br>
+                            <h5><u>Telephone Number</u></h5>
+                            
+                            <label for="" class="my-3">+44 7377515606</label>
+                            
+                        </div>
+                </div>
+
+                <div class="col-md m-5">
+                    <h1 class="my-5 ">Send Us the Message</h1>
+                    
+                    <form action="" method="post">
+                        <div class="row">
+                            <div class="col-md">
+                                <div class="mb-3">
+                                    <label for="firstname" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="firstname" aria-describedby="firstnameHelp">
+                                    <div id="firstnameHelp" class="form-text">We'll never share your data with anyone else.</div>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="mb-3">
+                                    <label for="lastname" class="form-label">Email address</label>
+                                    <input type="text" class="form-control" id="lastname" >
+                                </div>
+                            
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp">
+                        </div>
+                        <div class="mb-3">
+                            <label for="number" class="form-label">Telephone Number</label>
+                            <input type="tel" class="form-control" id="number"aria-describedby="numberHelp" placeholder="+447377515606">
+                            <div id="numberHelp" class="form-text">Country code required</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mb-5">Submit</button>
+                    </form>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</body>

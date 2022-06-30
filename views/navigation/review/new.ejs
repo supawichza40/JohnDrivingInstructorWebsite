@@ -1,0 +1,26 @@
+<%- layout("partials/boilerplate.ejs") %> 
+<body>
+    <div class="container">
+        <h1>New Review</h1>
+        <form action="/reviews" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" name="title" id="title" placeholder="Review Title" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Review</label>
+                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Student Review" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="author" class="form-label">Student Name</label>
+                <input type="text" class="form-control" id="author" name="author" placeholder="Student Name" required>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Picture of Student <strong>(Required)</strong></label>
+                <input class="form-control" type="file" id="image" name="image" required>
+            </div>
+            <button type="submit">Submit</button>
+    </div>
+    
+    </form>
+</body>
