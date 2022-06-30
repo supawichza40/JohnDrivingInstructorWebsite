@@ -1,0 +1,19 @@
+<%- layout("partials/boilerplate.ejs") %> 
+
+<body>
+    <div class="container">
+        <h1 class="mt-4">Detail</h1>
+        <br>
+        <h2>Title: <%= review.title %>
+        </h2>
+        <h3>Description: <%= review.description %>
+        </h3>
+        <h4>Created On: <%= moment(review.createdOn).format("Do MMMM, YYYY LT") %></h4>
+        <div class="card" style="max-width: 50rem;">
+            <img class="card-img-top" src="<%= review.image.url %> " alt="Card image cap">
+            
+        </div>
+    </div>
+
+    
+</body>

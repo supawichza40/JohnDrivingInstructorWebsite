@@ -1,0 +1,29 @@
+<% layout("partials/boilerplate.ejs") %> 
+<body>
+    <div class="container">
+        <h1>See what our student say about us!</h1>
+        <% var counter=0; %>
+        <% for(let review of reviews) {%> 
+           
+            <% if(counter%3==0) {%> 
+            <div class="card-group">
+            <% } %> 
+
+                <div class="card">
+                    <img class="card-img-top" src="<%= review.image.url %>" alt="Card image cap">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= review.title %> </h5>
+                        <p class="card-text"><%= review.description  %> </p>
+                        <p class="card-text"><small class="text-muted">Created on: <%= moment(review.createdOn).format("Do MMMM, YYYY LT") %> </small></p>
+                        <a href="/reviews/<%= review._id %>"><button>Detail</button></a>
+                    </div>
+                </div>
+
+
+            <% counter+=1 %>    
+            <% if(counter%3==0) {%>
+            </div>
+            <% } %>
+        <% } %> 
+    </div>
+</body>
