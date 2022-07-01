@@ -80,6 +80,9 @@ app.get("/gallery", async(req, res) => {
 
   res.render("navigation/gallery.ejs",{reviews:allReviews})
 })
+app.get("/map", (req, res) => {
+  res.render("navigation/map.ejs")
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
