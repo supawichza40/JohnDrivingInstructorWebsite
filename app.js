@@ -40,7 +40,7 @@ app.engine("ejs",ejsMate)
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);
 app.get("/", async (req, res) => {
-  res.send("This is a home page.")
+  res.render("navigation/home.ejs")
 })
 app.get("/reviews", async(req, res) => {
   var allReviews = await (Review.find({}));
@@ -74,6 +74,11 @@ app.post("/reviews",upload.array("image"), async (req, res) => {
 })
 app.get("/contact", async (req, res) => {
   res.render("navigation/contact/index.ejs")
+})
+app.get("/gallery", async(req, res) => {
+  var allReviews = await (Review.find({}));
+
+  res.render("navigation/gallery.ejs",{reviews:allReviews})
 })
 
 // catch 404 and forward to error handler

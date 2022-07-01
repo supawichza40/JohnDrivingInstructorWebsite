@@ -14,12 +14,13 @@ const seedReview = async () => {
             description: "This is a description",
             author:"Test Author",
             image: {
-                url: "https://www.5day.co.uk/wp-content/uploads/2022/06/IGeorge-bright-ipswich-28th-jpg-250x250.jpg?x14073",
+                url: "https://picsum.photos/600/400",
                 filename:"passedTest"
             },
             createdOn: new Date()
         })
         await newReview.save();
+        
 
     }
     console.log("done!");
