@@ -81,7 +81,8 @@ app.get("/gallery", async(req, res) => {
   res.render("navigation/gallery.ejs",{reviews:allReviews})
 })
 app.get("/map", (req, res) => {
-  res.render("navigation/map.ejs")
+  var google_api = `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAP_API}&callback=initMap`
+  res.render("navigation/map.ejs",{google_api:google_api})
 })
 
 // catch 404 and forward to error handler
