@@ -84,6 +84,12 @@ app.get("/map", (req, res) => {
   var google_api = `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAP_API}&callback=initMap`
   res.render("navigation/map.ejs",{google_api:google_api})
 })
+app.get("/area_cover", (req, res) => {
+  res.render("navigation/area_cover.ejs")
+})
+app.get("/prices", (req, res) => {
+  res.render("navigation/price.ejs")
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
