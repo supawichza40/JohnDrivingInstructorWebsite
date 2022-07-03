@@ -2,6 +2,27 @@
 if (process.env.NODE_ENV !== "production") {
     require("dotenv").config();
 }
+const MongoStore = require("connect-mongo");
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/JohnCarWebsite'
+const session = require("express-session");
+const sessionConfig = {
+    secret: process.env.SECRET,
+    resave: true,
+    saveUninitialized: true,
+    // cookie: { secure: true }
+    cookie: {
+        //so the expire is use if expire reach user will be force to log out.
+        httpOnly: true,
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,//Expire a week from now.
+        maxAge: 1000 * 60 * 60 * 24 * 7
+
+    },
+    store: MongoStore.create({
+        
+        mongoUrl: dbUrl,
+        touchAfter: 24 * 60 *60
+    })
+}
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -21,7 +42,7 @@ const upload = multer({storage})
 main().catch(err => console.log(err))
 
 async function main() {
-        await mongoose.connect('mongodb://127.0.0.1:27017/JohnCarWebsite'); //Does work 
+        await mongoose.connect(dbUrl); //Does work 
 
 }
 var app = express();
@@ -29,6 +50,7 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use(session(sessionConfig));
 
 app.use(logger('dev'));
 app.use(express.json());

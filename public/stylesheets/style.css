@@ -15,14 +15,38 @@ a:hover{
   text-decoration: none;
   color:burlywood;
 }
+#black a,
+a:focus,
+a:active {
+  text-decoration: none;
+  color: black;
+}
+img{
+  float: left;
+    width: 100px;
+    height: 500px;
+    object-fit:scale-down;
+}
+#black a:hover
+{
+  text-decoration: none;
+  color: blue;
+}
 
+.nav-font-size{
+  font-size:1.2rem;
+}
+.home-font{
+  font-size: 70px;
+}
 .logo-size{
-  font-size: 60px;
+  font-size: 3rem;
 }
 .logo-color{
     background: -webkit-linear-gradient(red, purple, blue);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.166);
 }
 li a {
   background: -webkit-linear-gradient(red, purple, blue);
@@ -203,6 +227,7 @@ body {
         rgba(0, 0, 0, 0.7)), url('https://www.tripsavvy.com/thmb/I2PeYOSYosY1DGV4X1ZRLdqUoN0=/2000x1500/filters:fill(auto,1)/car-traveling-along-winding-road--maui--hawaii--america--usa-737142515-9d7096b173654472968075d805273c8f.jpg');
         background-position: center;
 }
+
 #footer{
    position: fixed;
             padding: 10px 10px 0px 10px;
@@ -350,6 +375,9 @@ img {
   opacity: .6;
   -webkit-filter: blur(15px) contrast(2);
   filter: blur(15px) contrast(2);
+}
+#map {
+  height: 100%;
 }
 
 .popup .close {

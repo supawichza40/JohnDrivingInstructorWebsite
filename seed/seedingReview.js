@@ -8,21 +8,21 @@ async function main() {
 }
 const seedReview = async () => {
     await Review.deleteMany({});
-    for (let index = 0; index < 5; index++){
-        const newReview = new Review({
-            title: "Test",
-            description: "This is a description",
-            author:"Test Author",
-            image: {
-                url: "https://picsum.photos/600/400",
-                filename:"passedTest"
-            },
-            createdOn: new Date()
-        })
-        await newReview.save();
+    // for (let index = 0; index < 5; index++){
+    //     const newReview = new Review({
+    //         title: "Test",
+    //         description: "This is a description",
+    //         author:"Test Author",
+    //         image: {
+    //             url: "https://picsum.photos/600/400",
+    //             filename:"passedTest"
+    //         },
+    //         createdOn: new Date()
+    //     })
+    //     await newReview.save();
         
 
-    }
+    // }
     console.log("done!");
 }
 seedReview();
