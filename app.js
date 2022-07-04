@@ -2,9 +2,18 @@
 if (process.env.NODE_ENV !== "production") {
     require("dotenv").config();
 }
+const express = require("express");
+const mongoose = require("mongoose");
+const passport = require("passport")
+const methodOverride = require("method-override");
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
+var findOrCreate = require('mongoose-findorcreate')
+const session = require("express-session");
+const cookieSession = require("cookie-session")
 const MongoStore = require("connect-mongo");
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/JohnCarWebsite'
-const session = require("express-session");
+
+
 const sessionConfig = {
     secret: process.env.SECRET,
     resave: true,
@@ -24,7 +33,6 @@ const sessionConfig = {
     })
 }
 var createError = require('http-errors');
-var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -33,8 +41,6 @@ var Review = require("./models/review")
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const {storage, cloudinary} = require("./cloudinary/index")
-const mongoose = require('mongoose');
-const methodOverride = require("method-override");
 const multer = require("multer")
 var moment = require("moment");
 const upload = multer({storage})
@@ -45,8 +51,58 @@ async function main() {
         await mongoose.connect(dbUrl); //Does work 
 
 }
-var app = express();
+const userSchema = new mongoose.Schema({
+    googleId: String,
+  userName: String,
+    reviewCount:Number
+});
+userSchema.plugin(findOrCreate);
+const User = new mongoose.model("User", userSchema);
 
+var app = express();
+app.use(cookieSession({
+    maxAge: 24 * 60 * 60 * 1000,
+    keys: [process.env.SECRET]
+}));
+app.use(passport.initialize());
+app.use(passport.session())
+app.use(methodOverride("_method"))
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "/auth/google/redirect"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+      User.findOrCreate({ googleId: profile.id, userName:profile.displayName }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+passport.deserializeUser((id, done) => {
+  User.findById(id).then(user => {
+    done(null, user);
+  });
+});
+const isLoggedIn = function (req, res, next) {
+    if (req.user != null) {
+        next();
+    }
+    else {
+        res.redirect("/auth/google")
+    }
+}
+const isAllowToReview = async (req, res, next) => {
+  var numOfReview = await (Review.find({ user: req.user.googleId }));
+  if (numOfReview.length <= 0) {
+    next();
+  }
+  else {
+    res.redirect("/reviews")
+  }
+}
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -58,19 +114,38 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.engine("ejs",ejsMate)
-
+app.use((req, res, next) => {
+  res.locals.test = "test";
+  res.locals.currentUser = req.user||"";
+    next();
+})
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);
 app.get("/", async (req, res) => {
+  console.log(req.user)
   res.render("navigation/home.ejs")
 })
-app.get("/reviews", async(req, res) => {
+app.get("/auth/google", passport.authenticate("google", {
+  scope: ["profile", "email"],
+  prompt:"select_account"
+}));
+app.get("/auth/google/redirect", passport.authenticate("google"), function (req, res) {
+    res.redirect("/")
+});
+app.get("/auth/logout", (req, res) => {
+  req.logout();
+  req.session = null;
+  res.redirect("/")
+  
+})
+app.get("/reviews", async (req, res) => {
   var allReviews = await (Review.find({}));
   
 
   res.render("navigation/review/index.ejs",{reviews:allReviews,moment:moment});
 })
-app.get("/reviews/new", async (req, res) => {
+app.get("/reviews/new", isLoggedIn,isAllowToReview, async (req, res) => {
+
   res.render("navigation/review/new.ejs")
 })
 app.get("/reviews/:id", async (req, res) => {
@@ -90,9 +165,18 @@ app.post("/reviews",upload.array("image"), async (req, res) => {
       filename:"JohnDrivingInstructorWebsite/1665px-No-Image-Placeholder.svg_knnyh9.png"
     }
   }
+  req.body.user = req.user.googleId;
   var newReview = new Review(req.body);
+  console.log(req.user.reviewCount)
   await newReview.save();
   res.redirect("reviews")
+})
+app.delete("/reviews/:id", async (req, res) => {
+  console.log("delete route")
+  var deletedReview = await Review.findByIdAndDelete(req.params.id);
+  console.log(deletedReview)
+  await(cloudinary.uploader.destroy(deletedReview.image.filename))
+  res.redirect("/reviews")
 })
 app.get("/contact", async (req, res) => {
   res.render("navigation/contact/index.ejs")

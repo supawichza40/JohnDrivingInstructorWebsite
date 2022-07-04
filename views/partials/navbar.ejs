@@ -28,6 +28,12 @@
                         <a class="nav-link  nav-font-size" href="/contact">Contact Us</a>
                     </li>
                 </ul>
+                <% if(currentUser!="") {%> 
+                    <a href="/auth/logout"><button class="btn btn-sm">Log Out</button></a>
+                <% }else{ %> 
+                    <a href="/auth/google"><button class="btn btn-sm">Log In</button></a>          
+                    <% } %> 
+
                 <a href="tel:+447377515606"></a><button class="btn btn-primary">Click to book</button></a>
             </div>
         </div>

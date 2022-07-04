@@ -13,7 +13,7 @@ a:active {
 }
 a:hover{
   text-decoration: none;
-  color:burlywood;
+  color:rgb(0, 0, 0);
 }
 #black a,
 a:focus,
@@ -21,6 +21,7 @@ a:active {
   text-decoration: none;
   color: black;
 }
+
 img{
   float: left;
     width: 100px;

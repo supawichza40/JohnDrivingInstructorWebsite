@@ -13,6 +13,9 @@
             <img class="card-img-top" src="<%= review.image.url %> " alt="Card image cap">
             
         </div>
+        <form action="/reviews/<%= review._id %>?_method=DELETE " method="post">
+            <button type="submit">DELETE!</button>
+        </form>
     </div>
 
     
