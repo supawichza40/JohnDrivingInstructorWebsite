@@ -5,12 +5,14 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const mongoose = require("mongoose");
 const passport = require("passport")
+const flash = require("connect-flash");
 const methodOverride = require("method-override");
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var findOrCreate = require('mongoose-findorcreate')
 const session = require("express-session");
 const cookieSession = require("cookie-session")
 const MongoStore = require("connect-mongo");
+const sendMessage = require("./public/javascripts/sendingMail")
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/JohnCarWebsite'
 
 
@@ -67,6 +69,7 @@ app.use(cookieSession({
 app.use(passport.initialize());
 app.use(passport.session())
 app.use(methodOverride("_method"))
+app.use(flash());
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -103,6 +106,52 @@ const isAllowToReview = async (req, res, next) => {
     res.redirect("/reviews")
   }
 }
+const informationFormatAppointment = function (customerInfo) {
+    var messageFormated = "";
+    if (customerInfo.customerFirstname) {
+        messageFormated+=`First Name:${customerInfo.customerFirstname}\n`
+    }
+    if (customerInfo.customerLastname) {
+        messageFormated+=`Last Name:${customerInfo.customerLastname}\n`
+    }
+    if (customerInfo.customerEmail) {
+        messageFormated+=`Email:${customerInfo.customerEmail}\n`
+    }
+    if (customerInfo.customerNumber) {
+        messageFormated+=`Customer Number:${customerInfo.customerNumber}\n`
+    }
+    if (customerInfo.customerPostcode) {
+        messageFormated+=`Postcode:${customerInfo.customerPostcode}\n`
+    }
+    if (customerInfo.gearType) {
+        messageFormated+=`Gear Type:${customerInfo.gearType}\n`
+    }
+    if (customerInfo.additionalInfo) {
+        messageFormated+=`Additional Information\n${customerInfo.additionalInfo}\n`
+    }
+    return messageFormated;
+    
+}
+const informationFormatContact = function (customerInfo) {
+    var messageFormated = "";
+    if (customerInfo.firstname) {
+        messageFormated+=`First Name:${customerInfo.firstname}\n`
+    }
+    if (customerInfo.lastname) {
+        messageFormated+=`Last Name:${customerInfo.lastname}\n`
+    }
+    if (customerInfo.email) {
+        messageFormated+=`Email:${customerInfo.email}\n`
+    }
+    if (customerInfo.number) {
+        messageFormated+=`Customer Number:${customerInfo.number}\n`
+    }
+    if (customerInfo.message) {
+        messageFormated+=`Message\n${customerInfo.message}\n`
+    }
+    return messageFormated;
+    
+}
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -116,7 +165,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.engine("ejs",ejsMate)
 app.use((req, res, next) => {
   res.locals.test = "test";
-  res.locals.currentUser = req.user||"";
+  res.locals.currentUser = req.user || "";
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
     next();
 })
 // app.use('/', indexRouter);
@@ -137,6 +188,16 @@ app.get("/auth/logout", (req, res) => {
   req.session = null;
   res.redirect("/")
   
+})
+app.get("/enquiry", (req, res) => {
+  res.render("navigation/drivingEnquiry.ejs")
+})
+app.post("/enquiry", async (req, res) => {
+  console.log(req.body)
+  sendMessage(req.body.customerEmail,`Thank you for getting in touch with J W Driving School`, `Dear ${req.body.customerFirstname} ${req.body.customerLastname} \n\nWe have received your enquiry, and will get in touch as soon as we can, but for quicker response please call us on 07711112080.\n\nKind Regards\n\nJohn Walker\n+447711112080\njohnwalker120760@gmail.com\nHeronswood road, Welwyn Garden City`)//Send to customer
+  sendMessage("supawichza@gmail.com", "NEW CUSTOMER APPOINTMENT FOR J W Driving School!", `${informationFormatAppointment(req.body)}`)//send to John
+  req.flash("success","Message sent successful")
+  res.redirect("/")
 })
 app.get("/reviews", async (req, res) => {
   var allReviews = await (Review.find({}));
@@ -180,6 +241,13 @@ app.delete("/reviews/:id", async (req, res) => {
 })
 app.get("/contact", async (req, res) => {
   res.render("navigation/contact/index.ejs")
+})
+app.post("/contact", (req, res) => {
+  console.log(req.body)
+  sendMessage(req.body.email,`Thank you for getting in touch with J W Driving School`, `Dear ${req.body.firstname} ${req.body.lastname} \n\nWe have received your enquiry, and will get in touch as soon as we can, but for quicker response please call us on 07711112080.\n\nKind Regards\n\nJohn Walker\n+447711112080\njohnwalker120760@gmail.com\nHeronswood road, Welwyn Garden City`)//Send to customer
+  sendMessage("supawichza@gmail.com", "Customer Enquiry FOR J W Driving School!", `${informationFormatContact(req.body)}`)//send to John
+  req.flash("success","Message sent successful")
+  res.redirect("/")
 })
 app.get("/gallery", async(req, res) => {
   var allReviews = await (Review.find({}));
